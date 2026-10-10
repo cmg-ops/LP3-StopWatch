@@ -1,5 +1,6 @@
 package com.thelightphone.sdk.ui
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -24,11 +25,15 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -92,12 +97,21 @@ fun scrollViewContentWidthUnits(totalWidthUnits: Float, position: LightScrollBar
 fun LightScrollView(
     modifier: Modifier = Modifier,
     scrollBarPosition: LightScrollBarPosition = LightScrollBarPosition.Outside,
+    scrollState: ScrollState = rememberScrollState(),
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
     val scrollOffsetPx by remember { derivedStateOf { scrollState.value.toFloat() } }
-    val showScrollBar = scrollState.maxValue > 0
+    val contentOverflows = scrollState.maxValue > 0
+    var showScrollBar by remember { mutableStateOf(false) }
+    LaunchedEffect(contentOverflows) {
+        if (!contentOverflows) {
+            showScrollBar = false
+        } else {
+            withFrameMillis { }
+            showScrollBar = scrollState.maxValue > 0
+        }
+    }
     val contentPaddingEnd = scrollBarGutterUnits(scrollBarPosition)
 
     Box(modifier = modifier) {

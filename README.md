@@ -3,7 +3,7 @@
 A stopwatch for the **Light Phone 3**, built under the DailyHobbyist name.
 
 - **Package:** `com.dailyhobbyist.stopwatch`
-- **Version:** 4.0 (versionCode 4)
+- **Version:** 4.1.0 (versionCode 5) — built on Light SDK 0.2.0
 
 ## What this repo is
 
